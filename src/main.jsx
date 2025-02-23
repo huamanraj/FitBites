@@ -1,15 +1,12 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import App from './App.jsx'
+import App from './App'
 import './index.css'
+import { registerSW } from 'virtual:pwa-register'
 
-// Unregister any existing service workers
+// Register service worker
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.getRegistrations().then(function(registrations) {
-    for(let registration of registrations) {
-      registration.unregister();
-    }
-  });
+  registerSW();
 }
 
 ReactDOM.createRoot(document.getElementById('root')).render(
