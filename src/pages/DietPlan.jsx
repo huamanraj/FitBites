@@ -249,7 +249,6 @@ export default function DietPlan() {
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-3xl font-bold text-emerald-400">Your Diet & Exercise Plan</h2>
                 <motion.button
-                  whileHover={{ scale: 1.02 }}
                   onClick={() => setDietPlan(null)}
                   className="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg flex items-center gap-2 transition-all duration-200"
                 >
@@ -285,7 +284,6 @@ export default function DietPlan() {
               {/* Print Button */}
               <div className="mt-8 flex justify-center">
                 <motion.button
-                  whileHover={{ scale: 1.02 }}
                   onClick={handlePrint}
                   className="px-6 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg flex items-center gap-2 transition-all duration-200"
                 >
@@ -535,7 +533,6 @@ export default function DietPlan() {
                 {/* Submit Button */}
                 <div>
                   <motion.button
-                    whileHover={{ scale: 1.02 }}
                     type="submit"
                     disabled={loading}
                     className={`w-full px-4 py-3 rounded-lg text-white font-medium transition-all duration-200

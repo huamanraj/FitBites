@@ -14,7 +14,7 @@ export default function Dashboard() {
   const [foodEntries, setFoodEntries] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
-  const entriesPerPage = 7;
+  const entriesPerPage = 10; // Changed from 7 to 10
 
   useEffect(() => {
     const fetchEntries = async () => {
@@ -318,7 +318,7 @@ export default function Dashboard() {
               </div>
             </div>
 
-            {/* Historical Data */}
+              {/* Historical Data */}
             <div className="bg-slate-800/50 rounded-xl p-6 border border-slate-700">
               <h2 className="text-xl font-semibold mb-4">Historical Entries</h2>
               <div className="overflow-x-auto -mx-6 px-6">

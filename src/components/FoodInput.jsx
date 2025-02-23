@@ -86,7 +86,7 @@ export default function FoodInput({ onNewEntry }) {
           disabled={loading || !foodDescription.trim()}
           className={`w-full flex justify-center py-3 px-4 rounded-lg text-sm font-medium transition-colors duration-200
             ${loading || !foodDescription.trim() 
-              ? 'bg-slate-700 text-slate-400 cursor-not-allowed' 
+              ? 'bg-slate-700 text-slate-300 cursor-not-allowed' 
               : 'bg-emerald-500 text-white hover:bg-emerald-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500'
             }`}
         >

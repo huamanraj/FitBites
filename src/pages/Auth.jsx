@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { OptimizedImage } from '../components/Image';
+import Spinner from '../components/Spinner';
 
 const logo = new URL('../assets/logo.png', import.meta.url).href;
 
@@ -11,12 +12,14 @@ export default function Auth({ isLogin }) {
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
   const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const { login, register } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    setIsLoading(true);
 
     try {
       if (isLogin) {
@@ -27,6 +30,8 @@ export default function Auth({ isLogin }) {
       navigate('/dashboard');
     } catch (error) {
       setError(error.message || 'Authentication failed. Please check your credentials and try again.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -137,11 +142,18 @@ export default function Auth({ isLogin }) {
 
             <div>
               <motion.button
-                whileHover={{ scale: 1.02 }}
                 type="submit"
-                className="w-full px-4 py-3 bg-emerald-500 text-white font-medium rounded-lg hover:bg-emerald-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-all duration-200"
+                disabled={isLoading}
+                className="w-full px-4 py-3 bg-emerald-500 text-white font-medium rounded-lg hover:bg-emerald-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
-                {isLogin ? 'Sign in' : 'Create account'}
+                {isLoading ? (
+                  <>
+                    <Spinner className="w-5 h-5" />
+                    <span>{isLogin ? 'Signing in...' : 'Creating account...'}</span>
+                  </>
+                ) : (
+                  <span>{isLogin ? 'Sign in' : 'Create account'}</span>
+                )}
               </motion.button>
             </div>
 
