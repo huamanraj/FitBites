@@ -9,6 +9,7 @@ const Landing = lazy(() => import('./pages/Landing'));
 const Auth = lazy(() => import('./pages/Auth'));
 const Dashboard = lazy(() => import('./pages/Dashboard'));
 const DietPlan = lazy(() => import('./pages/DietPlan'));
+const History = lazy(() => import('./pages/History'));
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
               <Route path="/signup" element={<PublicRoute><Auth isLogin={false} /></PublicRoute>} />
               <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
               <Route path="/diet-plan" element={<ProtectedRoute><DietPlan /></ProtectedRoute>} />
+              <Route path="/history" element={<ProtectedRoute><History /></ProtectedRoute>} />
             </Routes>
           </Suspense>
         </ErrorBoundary>

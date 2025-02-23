@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { databases, Query } from '../config/appwrite';
 import { DATABASE_ID, COLLECTION_ID } from '../config/appwrite';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
@@ -14,7 +14,21 @@ export default function Dashboard() {
   const [foodEntries, setFoodEntries] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
-  const entriesPerPage = 10; // Changed from 7 to 10
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const menuRef = useRef(null);
+  const entriesPerPage = 10;
+
+  // Add click outside handler
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setIsMenuOpen(false);
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   useEffect(() => {
     const fetchEntries = async () => {
@@ -99,18 +113,71 @@ export default function Dashboard() {
     }
   };
 
+  // Replace the desktop buttons div with this new menu
+  const menuButton = (
+    <div className="relative" ref={menuRef}>
+      <button
+        onClick={() => setIsMenuOpen(!isMenuOpen)}
+        className="h-8 w-8 flex items-center justify-center rounded-lg bg-slate-700 hover:bg-slate-600 transition-colors duration-200"
+      >
+        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" />
+        </svg>
+      </button>
+
+      {isMenuOpen && (
+        <div className="absolute right-0 mt-2 w-48 rounded-lg bg-slate-800 border border-slate-700 shadow-lg z-50">
+          <div className="py-1">
+            <Link
+              to="/history"
+              className="flex items-center px-4 py-2 text-sm text-white hover:bg-slate-700"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              View Diet History
+            </Link>
+            <Link
+              to="/diet-plan"
+              className="flex items-center px-4 py-2 text-sm text-white hover:bg-slate-700"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+              </svg>
+              Get Diet Plan
+            </Link>
+            <button
+              onClick={() => {
+                handleLogout();
+                setIsMenuOpen(false);
+              }}
+              className="flex cursor-pointer items-center w-full px-4 py-2 text-sm text-white hover:bg-slate-700"
+            >
+              <svg className="w-4 h-4  mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+              </svg>
+              Logout
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+
   return (
     <div className="min-h-screen bg-slate-900 text-white py-6 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto space-y-8">
-        <div className="flex flex-col sm:flex-row justify-between bg-slate-800/50 rounded-xl p-6 border border-slate-700">
+        <div className="flex flex-col sm:flex-row justify-between rounded-xl p-6">
           <div className="flex justify-between items-center sm:items-start">
-            <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+            <div className="flex flex-col ">
               <img 
                 src={logo} 
                 alt="FitBites Logo" 
-                className="w-45 object-contain"
+                className="w-25 object-contain"
               />
-              <div className="hidden sm:block">
+              <div className="hidden sm:block mt-4 text-center">
                 <h1 className="text-3xl font-bold">
                   Hello, <span className="text-emerald-400">{user?.name || 'User'}</span>
                 </h1>
@@ -119,27 +186,9 @@ export default function Dashboard() {
                 </p>
               </div>
             </div>
-            <button
-              onClick={handleLogout}
-              className="sm:hidden group bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-colors duration-200 flex items-center"
-              title="Logout"
-            >
-              <div className="px-3 py-2">
-                <svg 
-                  className="w-5 h-5 transform group-hover:translate-x-1 transition-transform duration-200" 
-                  fill="none" 
-                  stroke="currentColor" 
-                  viewBox="0 0 24 24"
-                >
-                  <path 
-                    strokeLinecap="round" 
-                    strokeLinejoin="round" 
-                    strokeWidth={2} 
-                    d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" 
-                  />
-                </svg>
-              </div>
-            </button>
+            <div className="flex sm:hidden">
+              {menuButton}
+            </div>
           </div>
           
           {/* Mobile greeting - shown below logo */}
@@ -152,44 +201,56 @@ export default function Dashboard() {
             </p>
           </div>
 
-          {/* Desktop logout button */}
-          <button
-            onClick={handleLogout}
-            className="hidden sm:flex group bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-colors duration-200 items-center h-8 self-center"
-            title="Logout"
-          >
-            <span className="px-3 text-sm">Logout</span>
-            <div className="pr-2">
-              <svg 
-                className="w-4 h-4 transform group-hover:translate-x-1 transition-transform duration-200" 
-                fill="none" 
-                stroke="currentColor" 
-                viewBox="0 0 24 24"
-              >
-                <path 
-                  strokeLinecap="round" 
-                  strokeLinejoin="round" 
-                  strokeWidth={2} 
-                  d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" 
-                />
+          {/* Desktop menu */}
+          <div className="hidden sm:flex items-start gap-4">
+            <Link
+              to="/diet-plan"
+              className="h-8 px-4 flex items-center justify-center rounded-lg bg-emerald-600 hover:bg-emerald-500 transition-colors duration-200 text-sm"
+            >
+              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
               </svg>
-            </div>
-          </button>
+              Get Diet Plan
+            </Link>
+            {menuButton}
+          </div>
         </div>
 
         <FoodInput onNewEntry={handleNewEntry} />
 
-        {/* Header section */}
-        <div className="flex justify-end">
-          <Link
-            to="/diet-plan"
-            className="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-lg transition-colors duration-200 flex items-center gap-2"
-          >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-            </svg>
-            Get Diet Plan
-          </Link>
+        {/* Today's Summary Grid */}
+        <div className="bg-slate-800/50 rounded-xl p-6 border border-slate-700">
+          <h2 className="text-xl font-semibold mb-4">Today's Summary</h2>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <div className="bg-slate-700/50 rounded-lg p-4 border border-slate-600">
+              <div className="text-sm text-slate-400">Total Calories</div>
+              <div className="text-2xl font-bold text-emerald-400">
+                {todayEntries.reduce((sum, entry) => sum + entry.calories, 0)} 
+                <span className="text-sm text-slate-400 ml-1">kcal</span>
+              </div>
+            </div>
+            <div className="bg-slate-700/50 rounded-lg p-4 border border-slate-600">
+              <div className="text-sm text-slate-400">Total Protein</div>
+              <div className="text-2xl font-bold text-emerald-400">
+                {todayEntries.reduce((sum, entry) => sum + entry.protein, 0)}
+                <span className="text-sm text-slate-400 ml-1">g</span>
+              </div>
+            </div>
+            <div className="bg-slate-700/50 rounded-lg p-4 border border-slate-600">
+              <div className="text-sm text-slate-400">Total Carbs</div>
+              <div className="text-2xl font-bold text-emerald-400">
+                {todayEntries.reduce((sum, entry) => sum + entry.carbs, 0)}
+                <span className="text-sm text-slate-400 ml-1">g</span>
+              </div>
+            </div>
+            <div className="bg-slate-700/50 rounded-lg p-4 border border-slate-600">
+              <div className="text-sm text-slate-400">Total Fat</div>
+              <div className="text-2xl font-bold text-emerald-400">
+                {todayEntries.reduce((sum, entry) => sum + entry.fat, 0)}
+                <span className="text-sm text-slate-400 ml-1">g</span>
+              </div>
+            </div>
+          </div>
         </div>
 
         {loading ? (
@@ -318,75 +379,17 @@ export default function Dashboard() {
               </div>
             </div>
 
-              {/* Historical Data */}
-            <div className="bg-slate-800/50 rounded-xl p-6 border border-slate-700">
-              <h2 className="text-xl font-semibold mb-4">Historical Entries</h2>
-              <div className="overflow-x-auto -mx-6 px-6">
-                <div className="inline-block min-w-full align-middle">
-                  {foodEntries.length === 0 ? (
-                    <div className="text-center text-slate-400 py-8">
-                      No entries found. Start your nutrition tracking journey today!
-                    </div>
-                  ) : (
-                    <table className="min-w-full divide-y divide-slate-700">
-                      <thead>
-                        <tr className="text-slate-300 text-left text-xs uppercase tracking-wider">
-                          <th className="px-4 py-3">Date</th>
-                          <th className="px-4 py-3">Food</th>
-                          <th className="px-4 py-3">Calories</th>
-                          <th className="px-4 py-3">
-                            <span className="hidden sm:inline">Protein</span>
-                            <span className="sm:hidden">P</span>
-                          </th>
-                          <th className="px-4 py-3">
-                            <span className="hidden sm:inline">Carbs</span>
-                            <span className="sm:hidden">C</span>
-                          </th>
-                          <th className="px-4 py-3">
-                            <span className="hidden sm:inline">Fat</span>
-                            <span className="sm:hidden">F</span>
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-slate-700">
-                        {paginatedEntries.map((entry) => (
-                          <tr key={entry.$id} className="text-sm">
-                            <td className="px-4 py-3 whitespace-nowrap">
-                              {format(new Date(entry.timestamp), 'MMM d, HH:mm')}
-                            </td>
-                            <td className="px-4 py-3">
-                              <div className="max-w-xs sm:max-w-sm truncate" title={entry.description}>
-                                {entry.description}
-                              </div>
-                            </td>
-                            <td className="px-4 py-3">{entry.calories} kcal</td>
-                            <td className="px-4 py-3 whitespace-nowrap">{entry.protein}g</td>
-                            <td className="px-4 py-3 whitespace-nowrap">{entry.carbs}g</td>
-                            <td className="px-4 py-3 whitespace-nowrap">{entry.fat}g</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  )}
-                </div>
-              </div>
-
-              {/* Pagination */}
-              <div className="mt-4 flex justify-center gap-2">
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                  <button
-                    key={page}
-                    onClick={() => setCurrentPage(page)}
-                    className={`px-3 py-1 rounded-md text-sm ${
-                      currentPage === page
-                        ? 'bg-emerald-500 text-white'
-                        : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
-                    }`}
-                  >
-                    {page}
-                  </button>
-                ))}
-              </div>
+            {/* Add this button before the closing main div */}
+            <div className="flex justify-end gap-4">
+              <Link
+                to="/history"
+                className="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-lg transition-colors duration-200 flex items-center gap-2"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                View Diet History
+              </Link>
             </div>
           </>
         )}

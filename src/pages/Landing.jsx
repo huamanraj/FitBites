@@ -2,10 +2,44 @@ import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { OptimizedImage } from '../components/Image';
 import { Footer } from '../components/Footer';
+import { useEffect } from 'react'; // <-- New import
+import { BeakerIcon, ClipboardDocumentListIcon, BoltIcon, ChartBarIcon } from '@heroicons/react/24/outline';
 
 const logo = new URL('../assets/logo.png', import.meta.url).href;
 
 export default function Landing() {
+  useEffect(() => {
+    document.title = "FitBites | Transform Your Health with AI-Powered Nutrition";
+
+    const setOrUpdateMeta = (selector, tagName, attrName, attrValue, content) => {
+      let element = document.querySelector(selector);
+      if (!element) {
+        element = document.createElement(tagName);
+        element.setAttribute(attrName, attrValue);
+        document.head.appendChild(element);
+      }
+      element.setAttribute('content', content);
+    };
+
+    // Standard Meta Tags
+    setOrUpdateMeta('meta[name="description"]', 'meta', 'name', 'description', 'Join FitBites, an AI-powered platform that transforms your health with personalized nutrition and diet plans.');
+    setOrUpdateMeta('meta[name="keywords"]', 'meta', 'name', 'keywords', 'health, nutrition, AI, diet plans, personalized nutrition, FitBites');
+    setOrUpdateMeta('link[rel="canonical"]', 'link', 'rel', 'canonical', 'https://fitbites.vercel.app/');
+    
+    // Open Graph Tags
+    setOrUpdateMeta('meta[property="og:title"]', 'meta', 'property', 'og:title', 'FitBites | Transform Your Health with AI-Powered Nutrition');
+    setOrUpdateMeta('meta[property="og:description"]', 'meta', 'property', 'og:description', 'Join FitBites, an AI-powered platform that transforms your health with personalized nutrition and diet plans.');
+    setOrUpdateMeta('meta[property="og:image"]', 'meta', 'property', 'og:image', 'https://fitbites.vercel.app/src/assets/logo.png');
+    setOrUpdateMeta('meta[property="og:url"]', 'meta', 'property', 'og:url', 'https://fitbites.vercel.app/');
+    setOrUpdateMeta('meta[property="og:type"]', 'meta', 'property', 'og:type', 'website');
+    
+    // Twitter Card Tags
+    setOrUpdateMeta('meta[name="twitter:card"]', 'meta', 'name', 'twitter:card', 'summary_large_image');
+    setOrUpdateMeta('meta[name="twitter:title"]', 'meta', 'name', 'twitter:title', 'FitBites | Transform Your Health with AI-Powered Nutrition');
+    setOrUpdateMeta('meta[name="twitter:description"]', 'meta', 'name', 'twitter:description', 'Join FitBites, an AI-powered platform that transforms your health with personalized nutrition and diet plans.');
+    setOrUpdateMeta('meta[name="twitter:image"]', 'meta', 'name', 'twitter:image', 'https://fitbites.vercel.app/src/assets/logo.png');
+  }, []);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800">
       {/* Hero Section */}
@@ -82,21 +116,25 @@ export default function Landing() {
           transition={{ delay: 0.3 }}
           className="mt-24 max-w-4xl mx-auto"
         >
-          <h2 className="text-3xl font-bold text-white mb-12">Why Choose FitBites?</h2>
+          <h2 className="text-3xl font-bold text-white mb-12 text-center">Why Choose FitBites?</h2>
           <div className="grid md:grid-cols-2 gap-8">
             <BenefitItem
+              icon={<SmartMealIcon />}
               title="Smart Meal Analysis"
               description="Simply describe your meals and let our AI handle the nutritional calculations"
             />
             <BenefitItem
+              icon={<CustomDietIcon />}
               title="Custom Diet Plans"
               description="Get personalized meal plans tailored to your specific health goals"
             />
             <BenefitItem
+              icon={<ExerciseIcon />}
               title="Exercise Integration"
               description="Comprehensive workout plans that complement your nutrition goals"
             />
             <BenefitItem
+              icon={<MonitoringIcon />}
               title="Progress Monitoring"
               description="Track your journey with intuitive charts and detailed insights"
             />
@@ -145,10 +183,11 @@ function FeatureCard({ icon, title, description }) {
   );
 }
 
-// Component for benefit items
-function BenefitItem({ title, description }) {
+// Updated BenefitItem component with hover micro-interaction:
+function BenefitItem({ title, description, icon }) {
   return (
-    <div className="flex flex-col items-center text-center">
+    <div className="flex flex-col items-center text-center p-6 bg-slate-800/50 rounded-2xl shadow-md hover:shadow-xl transform hover:scale-105 transition duration-200">
+      {icon && <div className="mb-4">{icon}</div>}
       <h3 className="text-xl font-bold text-white mb-2">{title}</h3>
       <p className="text-slate-300">{description}</p>
     </div>
@@ -178,4 +217,21 @@ function TrackingIcon() {
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
     </svg>
   );
-} 
+}
+
+// New Icon Components using heroicons:
+function SmartMealIcon() {
+  return <BeakerIcon className="w-10 h-10 text-emerald-400" />;
+}
+
+function CustomDietIcon() {
+  return <ClipboardDocumentListIcon className="w-10 h-10 text-emerald-400" />;
+}
+
+function ExerciseIcon() {
+  return <BoltIcon className="w-10 h-10 text-emerald-400" />;
+}
+
+function MonitoringIcon() {
+  return <ChartBarIcon className="w-10 h-10 text-emerald-400" />;
+}
