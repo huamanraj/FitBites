@@ -171,59 +171,118 @@ export default function DietPlan() {
   };
 
   const handlePrint = () => {
-    const content = document.querySelector('.markdown-body');
-    const printWindow = window.open('', '_blank');
-    
-    printWindow.document.write(`
-      <html>
-        <head>
-          <title>Your Diet & Exercise Plan</title>
-          <link href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.2.0/github-markdown.min.css" rel="stylesheet">
-          <style>
-            body {
-              padding: 2rem;
-            }
-            .markdown-body {
-              box-sizing: border-box;
-              min-width: 200px;
-              max-width: 980px;
-              margin: 0 auto;
-              padding: 45px;
-            }
-            .markdown-body h1 { color: #059669; }
-            .markdown-body h2 { color: #1f2937; }
-            .markdown-body p, 
-            .markdown-body ul, 
-            .markdown-body li { color: #374151; }
-            .markdown-body strong { color: #059669; }
-            .markdown-body em { color: #4b5563; }
-            @media print {
-              @page {
-                margin: 2cm;
-              }
+    // Check if running on a mobile device
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+    if (isMobile) {
+      // Mobile-specific approach
+      const content = document.querySelector('.markdown-body');
+      const printWindow = window.open('');
+      
+      printWindow.document.write(`
+        <html>
+          <head>
+            <title>Your Diet & Exercise Plan</title>
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <link href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.2.0/github-markdown.min.css" rel="stylesheet">
+            <style>
               body {
-                padding: 0;
+                padding: 1rem;
+                background: white;
               }
               .markdown-body {
-                padding: 0;
+                box-sizing: border-box;
+                width: 100%;
+                margin: 0 auto;
+                padding: 15px;
+                background: white;
               }
-            }
-          </style>
-        </head>
-        <body class="markdown-body">
-          ${content.innerHTML}
-        </body>
-      </html>
-    `);
-    
-    printWindow.document.close();
-    printWindow.focus();
-    
-    // Wait for styles to load
-    setTimeout(() => {
-      printWindow.print();
-      printWindow.close();
-    }, 250);
+              .markdown-body h1 { color: #059669; }
+              .markdown-body h2 { color: #1f2937; }
+              .markdown-body p, 
+              .markdown-body ul, 
+              .markdown-body li { color: #374151; }
+              .markdown-body strong { color: #059669; }
+              .markdown-body em { color: #4b5563; }
+              @media screen and (max-width: 768px) {
+                body { padding: 0.5rem; }
+                .markdown-body { padding: 10px; }
+                .markdown-body h1 { font-size: 1.5em; }
+                .markdown-body h2 { font-size: 1.3em; }
+              }
+              @media print {
+                body { padding: 0; }
+                .markdown-body { padding: 0; }
+              }
+            </style>
+          </head>
+          <body class="markdown-body">
+            ${content.innerHTML}
+            <div style="text-align: center; margin-top: 20px;">
+              <button onclick="window.print()" style="
+                padding: 10px 20px;
+                background: #059669;
+                color: white;
+                border: none;
+                border-radius: 5px;
+                font-size: 16px;
+                cursor: pointer;
+              ">Print</button>
+            </div>
+          </body>
+        </html>
+      `);
+      
+      printWindow.document.close();
+    } else {
+      // Desktop approach
+      const content = document.querySelector('.markdown-body');
+      const printWindow = window.open('', '_blank');
+      
+      printWindow.document.write(`
+        <html>
+          <head>
+            <title>Your Diet & Exercise Plan</title>
+            <link href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.2.0/github-markdown.min.css" rel="stylesheet">
+            <style>
+              body {
+                padding: 2rem;
+              }
+              .markdown-body {
+                box-sizing: border-box;
+                min-width: 200px;
+                max-width: 980px;
+                margin: 0 auto;
+                padding: 45px;
+              }
+              .markdown-body h1 { color: #059669; }
+              .markdown-body h2 { color: #1f2937; }
+              .markdown-body p, 
+              .markdown-body ul, 
+              .markdown-body li { color: #374151; }
+              .markdown-body strong { color: #059669; }
+              .markdown-body em { color: #4b5563; }
+              @media print {
+                @page { margin: 2cm; }
+                body { padding: 0; }
+                .markdown-body { padding: 0; }
+              }
+            </style>
+          </head>
+          <body class="markdown-body">
+            ${content.innerHTML}
+          </body>
+        </html>
+      `);
+      
+      printWindow.document.close();
+      printWindow.focus();
+      
+      setTimeout(() => {
+        printWindow.print();
+        printWindow.close();
+      }, 250);
+    }
   };
 
   return (
