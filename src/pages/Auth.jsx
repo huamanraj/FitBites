@@ -12,13 +12,47 @@ export default function Auth({ isLogin }) {
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
   const [error, setError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const { login, register } = useAuth();
   const navigate = useNavigate();
 
+  const validatePassword = (password) => {
+    if (password.length < 8) {
+      return 'Password must be at least 8 characters long';
+    }
+    if (!/[A-Z]/.test(password)) {
+      return 'Password must contain at least one uppercase letter';
+    }
+    if (!/[a-z]/.test(password)) {
+      return 'Password must contain at least one lowercase letter';
+    }
+    if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
+      return 'Password must contain at least one special character';
+    }
+    return '';
+  };
+
+  const handlePasswordChange = (e) => {
+    const newPassword = e.target.value;
+    setPassword(newPassword);
+    if (!isLogin) {
+      setPasswordError(validatePassword(newPassword));
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    
+    if (!isLogin) {
+      const passwordValidationError = validatePassword(password);
+      if (passwordValidationError) {
+        setPasswordError(passwordValidationError);
+        return;
+      }
+    }
+
     setIsLoading(true);
 
     try {
@@ -69,7 +103,7 @@ export default function Auth({ isLogin }) {
             <OptimizedImage
               src={logo} 
               alt="FitBites Logo" 
-              className="w-40 mx-auto mb-6"
+              className="w-40 mx-auto"
             />
             <h2 className="text-3xl font-bold text-white mb-2">
               {isLogin ? 'Welcome Back!' : 'Create Account'}
@@ -122,11 +156,33 @@ export default function Auth({ isLogin }) {
                   id="password"
                   type="password"
                   required
-                  className="mt-1 block w-full px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
+                  className={`mt-1 block w-full px-4 py-3 bg-slate-800/50 border ${
+                    passwordError ? 'border-red-500' : 'border-slate-700'
+                  } rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all`}
                   placeholder="••••••••"
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={handlePasswordChange}
                 />
+                {!isLogin && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: password ? 'auto' : 0, opacity: password ? 1 : 0 }}
+                    className="mt-2 text-xs space-y-1 overflow-hidden"
+                  >
+                    <div className={`flex items-center ${password.length >= 8 ? 'text-green-400' : 'text-slate-400'}`}>
+                      <span>✓ At least 8 characters</span>
+                    </div>
+                    <div className={`flex items-center ${/[A-Z]/.test(password) ? 'text-green-400' : 'text-slate-400'}`}>
+                      <span>✓ One uppercase letter</span>
+                    </div>
+                    <div className={`flex items-center ${/[a-z]/.test(password) ? 'text-green-400' : 'text-slate-400'}`}>
+                      <span>✓ One lowercase letter</span>
+                    </div>
+                    <div className={`flex items-center ${/[!@#$%^&*(),.?":{}|<>]/.test(password) ? 'text-green-400' : 'text-slate-400'}`}>
+                      <span>✓ One special character</span>
+                    </div>
+                  </motion.div>
+                )}
               </div>
             </div>
 

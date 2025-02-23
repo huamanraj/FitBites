@@ -29,7 +29,7 @@ export default function Landing() {
     // Open Graph Tags
     setOrUpdateMeta('meta[property="og:title"]', 'meta', 'property', 'og:title', 'FitBites | Transform Your Health with AI-Powered Nutrition');
     setOrUpdateMeta('meta[property="og:description"]', 'meta', 'property', 'og:description', 'Join FitBites, an AI-powered platform that transforms your health with personalized nutrition and diet plans.');
-    setOrUpdateMeta('meta[property="og:image"]', 'meta', 'property', 'og:image', 'https://fitbites.vercel.app/icon.png');
+    setOrUpdateMeta('meta[property="og:image"]', 'meta', 'property', 'og:image', 'https://fitbites.vercel.app/src/assets/logo.png');
     setOrUpdateMeta('meta[property="og:url"]', 'meta', 'property', 'og:url', 'https://fitbites.vercel.app/');
     setOrUpdateMeta('meta[property="og:type"]', 'meta', 'property', 'og:type', 'website');
     
@@ -37,7 +37,7 @@ export default function Landing() {
     setOrUpdateMeta('meta[name="twitter:card"]', 'meta', 'name', 'twitter:card', 'summary_large_image');
     setOrUpdateMeta('meta[name="twitter:title"]', 'meta', 'name', 'twitter:title', 'FitBites | Transform Your Health with AI-Powered Nutrition');
     setOrUpdateMeta('meta[name="twitter:description"]', 'meta', 'name', 'twitter:description', 'Join FitBites, an AI-powered platform that transforms your health with personalized nutrition and diet plans.');
-    setOrUpdateMeta('meta[name="twitter:image"]', 'meta', 'name', 'twitter:image', 'https://fitbites.vercel.app/icon.png');
+    setOrUpdateMeta('meta[name="twitter:image"]', 'meta', 'name', 'twitter:image', 'https://fitbites.vercel.app/src/assets/logo.png');
   }, []);
 
   return (
