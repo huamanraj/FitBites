@@ -337,7 +337,7 @@ export default function DietPlan() {
                         required
                         className="mt-1 block w-full px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-lg text-white"
                       >
-                        <option value="">Select Gender</option>
+                        <option value="not_specified">Select Gender</option>
                         <option value="male">Male</option>
                         <option value="female">Female</option>
                         <option value="other">Other</option>
@@ -381,7 +381,7 @@ export default function DietPlan() {
                         required
                         className="mt-1 block w-full px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-lg text-white"
                       >
-                        <option value="">Select Activity Level</option>
+                          <option value="sedentary">Select Activity Level</option>
                         <option value="sedentary">Sedentary</option>
                         <option value="light">Light</option>
                         <option value="moderate">Moderate</option>
@@ -399,7 +399,7 @@ export default function DietPlan() {
                         required
                         className="mt-1 block w-full px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-lg text-white"
                       >
-                        <option value="">Select Goal</option>
+                        <option value="lose_weight">Select Goal</option>
                         <option value="lose_weight">Lose Weight</option>
                         <option value="maintain">Maintain Weight</option>
                         <option value="gain_muscle">Gain Muscle</option>
@@ -487,7 +487,7 @@ export default function DietPlan() {
                         onChange={handleInputChange}
                         className="mt-1 block w-full px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-lg text-white"
                       >
-                        <option value="">Select Budget</option>
+                        <option value="any">Select Budget</option>
                         <option value="low">Low</option>
                         <option value="medium">Medium</option>
                         <option value="high">High</option>
@@ -502,8 +502,8 @@ export default function DietPlan() {
                         onChange={handleInputChange}
                         className="mt-1 block w-full px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-lg text-white"
                       >
-                        <option value="">Select Cooking Time</option>
-                        <option value="minimal">Minimal</option>
+                        <option value="mixed">Select Cooking Time</option>
+                          <option value="minimal">Minimal</option>
                         <option value="moderate">Moderate</option>
                         <option value="extensive">Extensive</option>
                       </select>
