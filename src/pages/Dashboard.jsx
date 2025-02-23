@@ -7,30 +7,17 @@ import { motion } from 'framer-motion';
 import { format, startOfToday, subDays, isToday, startOfDay, isSameDay } from 'date-fns';
 import { useAuth } from '../context/AuthContext';
 import logo from '../assets/logo.png';
-import { storage, CACHE_KEYS, CACHE_DURATION } from '../utils/storage';
 import { Link } from 'react-router-dom';
 
 export default function Dashboard() {
   const { user, logout } = useAuth();
-  const [foodEntries, setFoodEntries] = useState(() => {
-    // Initialize from cache if available
-    return storage.getItem(CACHE_KEYS.FOOD_ENTRIES) || [];
-  });
+  const [foodEntries, setFoodEntries] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const entriesPerPage = 7;
 
   useEffect(() => {
-    const fetchAndCacheEntries = async () => {
-      const cachedTimestamp = storage.getItem(CACHE_KEYS.CACHE_TIMESTAMP);
-      const now = Date.now();
-
-      // Check if cache is valid
-      if (cachedTimestamp && now - cachedTimestamp < CACHE_DURATION) {
-        setLoading(false);
-        return;
-      }
-
+    const fetchEntries = async () => {
       try {
         const response = await databases.listDocuments(
           DATABASE_ID,
@@ -40,13 +27,7 @@ export default function Dashboard() {
             Query.orderDesc('timestamp'),
           ]
         );
-        
-        const entries = response.documents;
-        setFoodEntries(entries);
-        
-        // Update cache
-        storage.setItem(CACHE_KEYS.FOOD_ENTRIES, entries);
-        storage.setItem(CACHE_KEYS.CACHE_TIMESTAMP, now);
+        setFoodEntries(response.documents);
       } catch (error) {
         console.error('Error fetching food entries:', error);
       } finally {
@@ -55,7 +36,7 @@ export default function Dashboard() {
     };
 
     if (user?.$id) {
-      fetchAndCacheEntries();
+      fetchEntries();
     }
   }, [user?.$id]);
 
@@ -104,13 +85,7 @@ export default function Dashboard() {
           Query.orderDesc('timestamp'),
         ]
       );
-      
-      const entries = response.documents;
-      setFoodEntries(entries);
-      
-      // Update cache with new data
-      storage.setItem(CACHE_KEYS.FOOD_ENTRIES, entries);
-      storage.setItem(CACHE_KEYS.CACHE_TIMESTAMP, Date.now());
+      setFoodEntries(response.documents);
     } catch (error) {
       console.error('Error updating food entries:', error);
     }
@@ -119,8 +94,6 @@ export default function Dashboard() {
   const handleLogout = async () => {
     try {
       await logout();
-      // Clear cache on logout
-      storage.clearCache();
     } catch (error) {
       console.error('Logout failed:', error);
     }
@@ -420,4 +393,4 @@ export default function Dashboard() {
       </div>
     </div>
   );
-} 
+}

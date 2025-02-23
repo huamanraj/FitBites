@@ -42,6 +42,9 @@ export function AuthProvider({ children }) {
       await account.create(ID.unique(), email, password, name);
       await login(email, password);
     } catch (error) {
+      if (error.code === 409) {
+        throw new Error('Email already in use. Please use a different email.');
+      }
       throw new Error('Registration failed. Please try again.');
     }
   };
@@ -62,4 +65,4 @@ export function AuthProvider({ children }) {
   );
 }
 
-export const useAuth = () => useContext(AuthContext); 
+export const useAuth = () => useContext(AuthContext);

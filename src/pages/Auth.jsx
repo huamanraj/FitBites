@@ -19,18 +19,14 @@ export default function Auth({ isLogin }) {
     setError('');
 
     try {
-      // Hardcoded credentials for testing
-      const testEmail = 'test@example.com';
-      const testPassword = 'password123';
-
       if (isLogin) {
-        await login(testEmail, testPassword);
+        await login(email, password);
       } else {
-        await register(testEmail, testPassword, name);
+        await register(email, password, name);
       }
       navigate('/dashboard');
     } catch (error) {
-      setError(error.message || 'Authentication failed');
+      setError(error.message || 'Authentication failed. Please check your credentials and try again.');
     }
   };
 
@@ -171,4 +167,4 @@ export default function Auth({ isLogin }) {
       </motion.div>
     </div>
   );
-} 
+}

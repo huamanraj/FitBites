@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { lazy, Suspense } from 'react';
 import { LoadingScreen } from './components/LoadingScreen';
+import { ErrorBoundary } from './components/ErrorBoundary';
 import './App.css'
 
 const Landing = lazy(() => import('./pages/Landing'));
@@ -13,15 +14,17 @@ function App() {
   return (
     <AuthProvider>
       <Router>
-        <Suspense fallback={<LoadingScreen />}>
-          <Routes>
-            <Route path="/" element={<AuthenticatedRoute><Landing /></AuthenticatedRoute>} />
-            <Route path="/login" element={<PublicRoute><Auth isLogin={true} /></PublicRoute>} />
-            <Route path="/signup" element={<PublicRoute><Auth isLogin={false} /></PublicRoute>} />
-            <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-            <Route path="/diet-plan" element={<ProtectedRoute><DietPlan /></ProtectedRoute>} />
-          </Routes>
-        </Suspense>
+        <ErrorBoundary>
+          <Suspense fallback={<LoadingScreen />}>
+            <Routes>
+              <Route path="/" element={<AuthenticatedRoute><Landing /></AuthenticatedRoute>} />
+              <Route path="/login" element={<PublicRoute><Auth isLogin={true} /></PublicRoute>} />
+              <Route path="/signup" element={<PublicRoute><Auth isLogin={false} /></PublicRoute>} />
+              <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+              <Route path="/diet-plan" element={<ProtectedRoute><DietPlan /></ProtectedRoute>} />
+            </Routes>
+          </Suspense>
+        </ErrorBoundary>
       </Router>
     </AuthProvider>
   );

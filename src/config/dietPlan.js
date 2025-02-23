@@ -1,9 +1,8 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { memoize } from '../utils/cache';
 
 const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY);
 
-export const generateDietPlan = memoize(async (userData) => {
+export const generateDietPlan = async (userData) => {
   const model = genAI.getGenerativeModel({ model: "gemini-pro" });
   
   const prompt = `Create a comprehensive diet and exercise plan based on the following user information:
@@ -78,4 +77,4 @@ Format the response in clear, structured markdown with emojis for better readabi
     console.error("Error generating plan:", error);
     throw new Error("Failed to generate plan");
   }
-}); 
+};
