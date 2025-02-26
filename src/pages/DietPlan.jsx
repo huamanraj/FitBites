@@ -91,9 +91,10 @@ export default function DietPlan() {
   };
 
   const handleArrayInputChange = (name, value) => {
+    // Don't split the value on commas, store it as is
     setFormData(prev => ({
       ...prev,
-      [name]: value.split(',').map(item => item.trim()).filter(Boolean)
+      [name]: value
     }));
   };
 
@@ -138,6 +139,31 @@ export default function DietPlan() {
         }
       }
 
+      // Process array fields at submission time
+      const dietaryRestrictions = formData.dietaryRestrictions ? 
+        (typeof formData.dietaryRestrictions === 'string' ? 
+          formData.dietaryRestrictions.split(',').map(item => item.trim()).filter(Boolean) : 
+          formData.dietaryRestrictions) : 
+        [];
+      
+      const allergies = formData.allergies ? 
+        (typeof formData.allergies === 'string' ? 
+          formData.allergies.split(',').map(item => item.trim()).filter(Boolean) : 
+          formData.allergies) : 
+        [];
+      
+      const medicalConditions = formData.medicalConditions ? 
+        (typeof formData.medicalConditions === 'string' ? 
+          formData.medicalConditions.split(',').map(item => item.trim()).filter(Boolean) : 
+          formData.medicalConditions) : 
+        [];
+      
+      const preferredCuisines = formData.preferredCuisines ? 
+        (typeof formData.preferredCuisines === 'string' ? 
+          formData.preferredCuisines.split(',').map(item => item.trim()).filter(Boolean) : 
+          formData.preferredCuisines) : 
+        [];
+
       // Prepare document data with proper type conversion
       const documentData = {
         ...formData,
@@ -145,9 +171,19 @@ export default function DietPlan() {
         weight: parseInt(formData.weight, 10),
         height: parseInt(formData.height, 10),
         mealPreference: parseInt(formData.mealPreference, 10),
+        dietaryRestrictions,
+        allergies,
+        medicalConditions,
+        preferredCuisines,
         userId: user.$id,
         lastUpdated: new Date().toISOString(),
-        dietPlan: await generateDietPlan(formData)
+        dietPlan: await generateDietPlan({
+          ...formData,
+          dietaryRestrictions,
+          allergies,
+          medicalConditions,
+          preferredCuisines
+        })
       };
 
       // Save to Appwrite
@@ -509,7 +545,9 @@ export default function DietPlan() {
                           </label>
                           <input
                             type="text"
-                            value={formData.dietaryRestrictions.join(', ')}
+                            value={typeof formData.dietaryRestrictions === 'string' 
+                              ? formData.dietaryRestrictions 
+                              : formData.dietaryRestrictions.join(', ')}
                             onChange={(e) => handleArrayInputChange('dietaryRestrictions', e.target.value)}
                             placeholder="vegetarian, vegan, etc."
                             className="mt-1 block w-full px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-lg text-white"
@@ -522,7 +560,9 @@ export default function DietPlan() {
                           </label>
                           <input
                             type="text"
-                            value={formData.allergies.join(', ')}
+                            value={typeof formData.allergies === 'string' 
+                              ? formData.allergies 
+                              : formData.allergies.join(', ')}
                             onChange={(e) => handleArrayInputChange('allergies', e.target.value)}
                             placeholder="nuts, dairy, etc."
                             className="mt-1 block w-full px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-lg text-white"
@@ -535,7 +575,9 @@ export default function DietPlan() {
                           </label>
                           <input
                             type="text"
-                            value={formData.medicalConditions.join(', ')}
+                            value={typeof formData.medicalConditions === 'string' 
+                              ? formData.medicalConditions 
+                              : formData.medicalConditions.join(', ')}
                             onChange={(e) => handleArrayInputChange('medicalConditions', e.target.value)}
                             placeholder="diabetes, hypertension, etc."
                             className="mt-1 block w-full px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-lg text-white"
@@ -548,7 +590,9 @@ export default function DietPlan() {
                           </label>
                           <input
                             type="text"
-                            value={formData.preferredCuisines.join(', ')}
+                            value={typeof formData.preferredCuisines === 'string' 
+                              ? formData.preferredCuisines 
+                              : formData.preferredCuisines.join(', ')}
                             onChange={(e) => handleArrayInputChange('preferredCuisines', e.target.value)}
                             placeholder="Italian, Indian, etc."
                             className="mt-1 block w-full px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-lg text-white"
