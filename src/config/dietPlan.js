@@ -1,6 +1,6 @@
 export const generateDietPlan = async (userData) => {
   try {
-    const response = await fetch('http://localhost:3000/api/generate-diet-plan', {
+    const response = await fetch('https://fitbitesapi.vercel.app/api/generate-diet-plan', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

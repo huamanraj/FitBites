@@ -1,6 +1,6 @@
 export const analyzeFood = async (foodDescription) => {
   try {
-    const response = await fetch('http://localhost:3000/api/analyze-food', {
+    const response = await fetch('https://fitbitesapi.vercel.app/api/analyze-food', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
