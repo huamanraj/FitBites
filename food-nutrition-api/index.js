@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const { OpenAI } = require('openai');
+const { GoogleGenerativeAI } = require('@google/generative-ai');
 require('dotenv').config();
 
 const app = express();
@@ -18,10 +18,8 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json());
 
-// Initialize OpenAI
-const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY
-});
+// Initialize Gemini AI
+const genAI = new GoogleGenerativeAI('AIzaSyBFPY3kc3ZsCUBRsTF-oD9zpdj65Jk39sg');
 
 // Helper function to extract JSON from text
 const extractJSON = (text) => {
@@ -71,15 +69,10 @@ app.post('/api/analyze-food', async (req, res) => {
       "fat": 14
     }`;
 
-        const completion = await openai.chat.completions.create({
-            model: "gpt-3.5-turbo",
-            messages: [
-                { role: "system", content: "You are a nutrition analysis assistant that only responds with JSON." },
-                { role: "user", content: prompt }
-            ]
-        });
+        const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-exp" });
+        const result = await model.generateContent(prompt);
+        const text = result.response.text();
 
-        const text = completion.choices[0].message.content;
         const nutritionData = extractJSON(text);
 
         if (!nutritionData) {
@@ -183,24 +176,16 @@ Based on goals and dietary restrictions
 
 Format the response in clear, structured markdown with emojis for better readability.`;
 
-    const completion = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo",
-      messages: [
-        { role: "system", content: "You are a professional nutritionist and fitness expert who creates personalized diet and exercise plans." },
-        { role: "user", content: prompt }
-      ],
-      max_tokens: 3000,
-      temperature: 0.7,
-    });
+    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-exp" });
+    const result = await model.generateContent(prompt);
+    const dietPlan = result.response.text();
 
-    const dietPlan = completion.choices[0].message.content;
     res.json({ dietPlan });
   } catch (error) {
     console.error("Error generating diet plan:", error);
     res.status(500).json({ error: `Failed to generate diet plan: ${error.message}` });
   }
 });
-
 
 
 // Health check endpoint
